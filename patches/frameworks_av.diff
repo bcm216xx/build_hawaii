@@ -1,3 +1,19 @@
+From c7717cd91203aa508d0312896e28a702cf22011b Mon Sep 17 00:00:00 2001
+From: karthick111 <karthickrko61@gmail.com>
+Date: Sat, 19 Nov 2016 18:16:12 +0100
+Subject: [PATCH 1/1] fw/av patch
+
+Change-Id: I2753fc0b58c1dbb46bd13203738ecd8f26eb710b
+Signed-off-by: karthick111 <karthickrko61@gmail.com>
+---
+ include/media/stagefright/ACodec.h                 |  3 -
+ include/media/stagefright/ColorConverter.h         |  3 +
+ media/libstagefright/ACodec.cpp                    | 22 ++++++-
+ media/libstagefright/OMXCodec.cpp                  | 54 ++++++++++++-----
+ .../colorconversion/ColorConverter.cpp             | 70 ++++++++++++++++++++++
+ .../colorconversion/SoftwareRenderer.cpp           | 30 +++-------
+ 6 files changed, 140 insertions(+), 42 deletions(-)
+
 diff --git a/include/media/stagefright/ACodec.h b/include/media/stagefright/ACodec.h
 index 3ffac34..16b77a6 100644
 --- a/include/media/stagefright/ACodec.h
@@ -27,7 +43,7 @@ index 85ba920..56ebb77 100644
              const BitmapParams &src, const BitmapParams &dst);
  
 diff --git a/media/libstagefright/ACodec.cpp b/media/libstagefright/ACodec.cpp
-index 607b7b0..370d97e 100644
+index cdeb161..c41b8c2 100644
 --- a/media/libstagefright/ACodec.cpp
 +++ b/media/libstagefright/ACodec.cpp
 @@ -111,6 +111,8 @@
@@ -68,7 +84,7 @@ index 607b7b0..370d97e 100644
  #endif
  
      if (err != 0) {
-@@ -1963,6 +1981,8 @@ status_t ACodec::configureCodec(
+@@ -1964,6 +1982,8 @@ status_t ACodec::configureCodec(
          err = setMinBufferSize(kPortIndexInput, (size_t)maxInputSize);
      } else if (!strcmp("OMX.Nvidia.aac.decoder", mComponentName.c_str())) {
          err = setMinBufferSize(kPortIndexInput, 8192);  // XXX
@@ -78,7 +94,7 @@ index 607b7b0..370d97e 100644
  
      mBaseOutputFormat = outputFormat;
 diff --git a/media/libstagefright/OMXCodec.cpp b/media/libstagefright/OMXCodec.cpp
-index 3706e9b..1a9c9a6 100644
+index 4a53755..2ef0cf3 100644
 --- a/media/libstagefright/OMXCodec.cpp
 +++ b/media/libstagefright/OMXCodec.cpp
 @@ -124,6 +124,8 @@
@@ -135,7 +151,7 @@ index 3706e9b..1a9c9a6 100644
  #ifdef MTK_HARDWARE
      OMX_U32 memoryAlign = 32;
      size_t totalSize = def.nBufferCountActual *
-@@ -2299,11 +2303,31 @@ status_t OMXCodec::allocateOutputBuffersFromNativeWindow() {
+@@ -2301,11 +2305,31 @@ status_t OMXCodec::allocateOutputBuffersFromNativeWindow() {
              frameHeight,
              def.format.video.eColorFormat);
  #else
@@ -168,7 +184,7 @@ index 3706e9b..1a9c9a6 100644
  #endif
  
      if (err != 0) {
-@@ -2358,14 +2382,8 @@ status_t OMXCodec::allocateOutputBuffersFromNativeWindow() {
+@@ -2360,14 +2384,8 @@ status_t OMXCodec::allocateOutputBuffersFromNativeWindow() {
      usage |= (GRALLOC_USAGE_SW_WRITE_OFTEN | GRALLOC_USAGE_SW_READ_OFTEN);
  #endif
  
@@ -183,7 +199,7 @@ index 3706e9b..1a9c9a6 100644
  
      if (err != 0) {
          ALOGE("native_window_set_usage failed: %s (%d)", strerror(-err), -err);
-@@ -4715,13 +4733,13 @@ status_t OMXCodec::read(
+@@ -4717,13 +4735,13 @@ status_t OMXCodec::read(
              mPaused = false;
          }
  
@@ -198,7 +214,7 @@ index 3706e9b..1a9c9a6 100644
      }
  
      if (seeking) {
-@@ -5470,7 +5488,11 @@ status_t QueryCodec(
+@@ -5472,7 +5490,11 @@ status_t QueryCodec(
                      caps->mColorFormats.push(flexibleEquivalent);
                  }
              }
@@ -376,3 +392,6 @@ index 7cd1bf6..4dfaadb 100644
      }
  
  skip_copying:
+-- 
+2.1.4
+
